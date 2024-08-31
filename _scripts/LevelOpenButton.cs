@@ -1,17 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using Zenject;
 
-public class LevelOpenButton : MonoBehaviour
+namespace Pryanik
 {
-    [SerializeField] private string _sceneName;
-    [SerializeField] private string _levelId;
-
-    public void OpenLevel()
+    public class LevelOpenButton : MonoBehaviour
     {
-        PlayerPrefsManager.LevelId = _levelId;
-        SceneManager.LoadScene(_sceneName,LoadSceneMode.Single);
+        [Inject] ISceneController _controller;
+        [SerializeField] private string _levelId;
+
+        public void OpenLevel()
+        {
+            PlayerPrefsManager.LevelId = _levelId;
+            _controller.OpenGameplay();
+        }
     }
 }

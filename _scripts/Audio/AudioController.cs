@@ -13,16 +13,23 @@ namespace Pryanik.Audio
     {
         void PlayAudio(AudioControllerPlayParams @params);
         void StopAudio(string id); 
+        void SetPause(string id,bool val);
     }
     public class AudioController : MonoBehaviour, IAudioController
     {
         [Inject] private AudioPool _pool;
         [Inject] private AudioStorage _storage;
+            
 
         public void PlayAudio(AudioControllerPlayParams @params)
         {
             AudioClip clip = _storage.GetById(@params.id).Clip;
             _pool.Spawn().PlayAudio(new AudioPlayParams(@params,clip));
+        }
+
+        public void SetPause(string id, bool val)
+        {
+            _pool.SetPause(id,val);
         }
 
 #nullable enable

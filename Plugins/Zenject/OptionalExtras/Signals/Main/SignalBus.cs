@@ -1,7 +1,7 @@
+using ModestTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ModestTree;
 #if ZEN_SIGNALS_ADD_UNIRX
 using UniRx;
 #endif

@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Pryanik.Res;
+using UnityEngine;
 namespace Pryanik.Layout
 {
 

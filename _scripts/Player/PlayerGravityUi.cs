@@ -37,5 +37,10 @@ namespace Pryanik
             newCol.a = 1;
             _image.DOColor(newCol, _hideTime);
         }
+
+        private void OnDisable()
+        {
+            _image.DOKill();
+        }
     }
 }
