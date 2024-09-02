@@ -20,7 +20,6 @@ namespace Pryanik.PlayerStateMachine
         }
         public override void OnClick()
         {
-            Debug.Log(InverseMultiplyer);
             _player._rb.velocity = Vector2.up * _player._config._jump * InverseMultiplyer;
         }
     }

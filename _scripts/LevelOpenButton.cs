@@ -1,17 +1,15 @@
 using UnityEngine;
 using Zenject;
 
-namespace Pryanik
+namespace Pryanik.LevelMenu
 {
     public class LevelOpenButton : MonoBehaviour
     {
-        [Inject] ISceneController _controller;
-        [SerializeField] private string _levelId;
+        [Inject] ILevelMenuManager _controller;
 
-        public void OpenLevel()
+        public void OpenMenu()
         {
-            PlayerPrefsManager.LevelId = _levelId;
-            _controller.OpenGameplay();
+            _controller.Open();
         }
     }
 }

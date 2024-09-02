@@ -20,9 +20,10 @@ namespace Pryanik
             while (_pool == null)
                 await Task.Delay(10);
 
+            _slider.onValueChanged.AddListener(OnSliderChanged);
             _slider.value = PlayerPrefsManager.Volume;
         }
-        public void OnSliderChanged(Single value)
+        void OnSliderChanged(Single value)
         {
             PlayerPrefsManager.Volume = value;
             _pool.ChangeVolume(value);

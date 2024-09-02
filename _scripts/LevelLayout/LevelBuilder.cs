@@ -10,6 +10,7 @@ namespace Pryanik.Layout
         [Inject] private IPlayer _player;
         [Inject] private IPlayerCamera _cam;
         [Inject] private LayoutStorage _storage;
+        [Inject] private IGamePlaySceneController _gamePlaySceneController;
 
         private void Awake()
         {
@@ -24,6 +25,7 @@ namespace Pryanik.Layout
             {
                 player = _player,
                 camera = _cam,
+                gamePlaySceneController = _gamePlaySceneController,
             };
 
             

@@ -1,4 +1,7 @@
+using Pryanik.Checkpoint;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 namespace Pryanik
@@ -11,9 +14,11 @@ namespace Pryanik
         public void SetSpeedX(float val);
     }
     [RequireComponent(typeof(Camera))]
-    public class PlayerCamera : MonoBehaviour, IPlayerCamera
+    public class PlayerCamera : MonoBehaviour, IPlayerCamera, IStartable
     {
         [SerializeField] private Transform _followTarget;
+
+        private bool _setCheckpoints;
 
         private float _speedX;
         private float _speedY;
@@ -24,17 +29,12 @@ namespace Pryanik
         private float _curY;
         private float _targetY;
 
+        [Inject] private ICheckPointManager _checkPointManager;
+
         [Inject]
         public void Inject(IGamePlaySceneController gamePlaySceneController)
         {
-            gamePlaySceneController.OnStart += () =>
-            {
-                _targetOffsetX = 0f;
-                _offsetX = 0f;
-
-                _targetY = 0f;
-                _curY = 0f;
-            };
+            gamePlaySceneController.StartSubscribe(this);
         }
 
         private void Update()
@@ -72,6 +72,56 @@ namespace Pryanik
         public void SetSpeedY(float val)
         {
             _speedY = val;
+        }
+
+        public void OnStart(bool practice)
+        {
+            _setCheckpoints = practice;
+            CameraCheckointData data;
+            if (practice && _checkPointManager.TryGetLastCameraCheckpoint(out data))
+            {
+                _speedX = data.speedX;
+                _speedY = data.speedY;
+
+                _targetOffsetX = data.targetOffsetX;
+                _offsetX = data.targetOffsetX;
+
+                _targetY = data.targetY;
+                _curY = data.targetY;
+            }
+            else SetDefault();
+        }
+
+        void SetDefault()
+        {
+            _speedX = 0;
+            _speedY = 0;
+
+            _targetOffsetX = 0f;
+            _offsetX = 0f;
+
+            _targetY = 0f;
+            _curY = 0f;
+        }
+
+        public void OnCheckpointSet(InputAction.CallbackContext ctx)
+        {
+  
+            if (_setCheckpoints && ctx.performed)
+            {
+                _checkPointManager.SetCameraCheckpoint(new CameraCheckointData
+                {
+                    speedX = _speedX,
+                    speedY = _speedY,
+                    targetOffsetX = _targetOffsetX,
+                    targetY = _targetY
+                });
+            }
+        }
+
+        public void OnFail(bool practice)
+        {
+            _setCheckpoints = false;
         }
     }
 }

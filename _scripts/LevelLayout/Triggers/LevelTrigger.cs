@@ -6,10 +6,10 @@ namespace Pryanik.Layout
     {
         internal IPlayer player;
         internal IPlayerCamera camera;
+        internal IGamePlaySceneController gamePlaySceneController;
     }
     public abstract class LevelTrigger : MonoBehaviour
     {
-        [SerializeField] protected bool _destroyOnTouch;
         internal abstract void SetParameters(TriggerParams @params);
     }
 }

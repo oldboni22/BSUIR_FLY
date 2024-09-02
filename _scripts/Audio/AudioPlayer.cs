@@ -1,4 +1,5 @@
-using System;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -23,7 +24,7 @@ namespace Pryanik.Audio
     public class AudioPlayer : MonoBehaviour
     {
         [SerializeField] internal AudioSource _audioSource;
-        private string _id;
+        internal string _id;
         private bool _isPaused = false;
         internal AudioPool _pool;
 
@@ -50,9 +51,9 @@ namespace Pryanik.Audio
                     }
         }
 #nullable disable
-        internal void PlayAudio(AudioPlayParams @params)
+        internal void PlayAudio(AudioPlayParams @params, bool loop)
         {
-            
+            _audioSource.loop = loop;
             _audioSource.clip = @params.clip;
             _audioSource.priority = @params.prio;
             _id = @params.id;
@@ -68,6 +69,7 @@ namespace Pryanik.Audio
         private void Reset()
         {
             gameObject.SetActive(false);
+            
             _id = null;
             _pool.Despawn(this);
         }
@@ -75,20 +77,18 @@ namespace Pryanik.Audio
 
     public class AudioPool : MonoMemoryPool<AudioPlayer>
     {
-        private event Action<string> _onCancellCall;
-        private event Action<string,bool> _onPauseCall;
-        private event Action<float> _onVolChangedCall;
+        private readonly List<AudioPlayer> _list = new List<AudioPlayer>(2);
         protected override void OnCreated(AudioPlayer item)
         {
             item._audioSource.volume = PlayerPrefsManager.Volume;
             item._pool = this;
 
-            _onPauseCall += item.OnPauseCall;
-            _onVolChangedCall += item.OnVolumeChanged;
-            _onCancellCall += item.OnCancelCall;
+            _list.Add(item);
         }
-        public void CancellAudio(string id) => _onCancellCall.Invoke(id);
-        public void ChangeVolume(float val) => _onVolChangedCall.Invoke(val);
-        public void SetPause(string id, bool val) => _onPauseCall.Invoke(id, val);
-    }
+        public void CancellAudio(string id) { foreach(var audio in _list) audio.OnCancelCall(id); }
+        public void ChangeVolume(float val) { foreach (var audio in _list) audio.OnVolumeChanged(val); }
+        public void SetPause(string id, bool val) { foreach(var audio in _list) audio.OnPauseCall(id,val); }
+        public bool IsPlaying(string id) => _list.Any(audio => audio._id == id);
+
+}
 }

@@ -14,5 +14,7 @@ namespace Pryanik.Layout
     {
         [SerializeField] internal LayoutTriggers _trigger;
         [SerializeField] internal GameObject _obstacles;
+        [SerializeField] private float _endX;
+        public float EndX => _endX;
     }
 }
